@@ -1,0 +1,38 @@
+image: gitpod/workspace-full
+
+tasks:
+  - init: |
+      # Install necessary tools and dependencies
+      sudo apt-get update
+      sudo apt-get install -y maven python3-pip
+      npm install -g create-react-app
+    command: |
+      # Setup virtual environment for Python
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt || echo "No requirements.txt file"
+      # Initialize Maven project if not already present
+      if [ ! -f "java-project/pom.xml" ]; then
+        mvn archetype:generate -DgroupId=com.example -DartifactId=java-project -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+      fi
+      # Initialize React project if not already present
+      if [ ! -d "react-app" ]; then
+        npx create-react-app react-app
+      fi
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+    - ms-python.python
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - ms-toolsai.jupyter
+    - ms-vscode.vscode-typescript-next
+
+ports:
+  - port: 3000 # ReactJS default port
+    onOpen: open-preview
+  - port: 8000 # Python application default port
+    onOpen: open-preview
+  - port: 8080 # Java application default port
+    onOpen: open-preview
